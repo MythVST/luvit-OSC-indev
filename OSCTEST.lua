@@ -98,12 +98,12 @@ end
 --declare message function
 OSCserver = dgram.createSocket()
 path = packStr("/Test/Value")
-pArgs = packStr(",iis")
-outMessage = packVal(splitByte(1234))..packVal(splitByte(5678))..packStr("Hello World!\000")
-print(#packVal("Boob\000"))
+pArgs = packStr(",iifsf")
+outMessage = packVal(splitByte(1234))..packVal(splitByte(5678))..splitByte(float2hex(1.234))..packStr("Hello World!\000")..splitByte(float2hex(567.8))
 print(HOST..":"..PORT)
-print(#path)
-print(#pArgs)
-print(#outMessage)
+--print(#path)
+--print(#pArgs)
+--print(#outMessage)
 OSCserver:send(path..pArgs..outMessage,PORT,HOST)
 OSCserver:on('message',onMessageOSC)
+
