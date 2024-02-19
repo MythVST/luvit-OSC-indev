@@ -99,7 +99,7 @@ end
 OSCserver = dgram.createSocket()
 path = packStr("/Test/Value")
 pArgs = packStr(",iifsf")
-outMessage = packVal(splitByte(1234))..packVal(splitByte(5678))..splitByte(float2hex(1.234))..packStr("Hello World!\000")..splitByte(float2hex(567.8))
+outMessage = packVal(splitByte(1234))..packVal(splitByte(5678))..splitByte(float2hex(1.234))..packStr("Hello World!")..splitByte(float2hex(567.8))
 print(HOST..":"..PORT)
 --print(#path)
 --print(#pArgs)
@@ -107,3 +107,27 @@ print(HOST..":"..PORT)
 OSCserver:send(path..pArgs..outMessage,PORT,HOST)
 OSCserver:on('message',onMessageOSC)
 
+--deconstructed
+--path part begins with a forward slash and a name.
+--Subpaths are doable too.
+-- "/Test/Value"
+-- the path, being a string, must be padded out to a multiple of 4 bytes, which is doable with packStr("/Test/Value") or manually by counting the chars and adding nulls at the end "/Test/Value\000"
+-- "/Test/Value\000"
+--onto the arguments
+--start with a comma, and then list out the types of data being sent.
+--",ifs"
+--i for int, f for float, s for string
+--this part must once again be padded. luckily, it's already a multiple of 4 right now, so no work needs done.
+--now onto the values
+--all values must be converted to ascii representations of themselves. don't do this manually. use splitByte(value) to split up a numeric value.
+--for ints, just splitBtye(value) is necessary. for floats though, you'll need to use splitByte(float2hex(value))
+--padding is once again necessary (at least with ints. thanks to standardization, floats are already padded). this time, in front of the value instead of behind it, which is what packVal is for.
+--packVal(splitByte(1234)) outputs '\000\000\004\210' and '\068\013\243\051' is the result of splitBtye(float2hex(567.8))
+--strings can be packed with packStr still. packStr("Hello World!"") results in "Hello World!\000\000\000\000". It should be noted that all strings should terminate in a null character *before* packing
+--putting it all together, we come out with this
+--"/Test/Value\000,ifs\000\000\004\210\068\013\243\051Hello World!\000\000\000\000"
+--running print(#"/Test/Value\000,ifs\000\000\004\210\068\013\243\051Hello World!\000\000\000\000") gives us 40. it's always good to verify that your strings work
+
+
+--todo: RGB
+--rgb doesn't seem to get noticed by protokol :(

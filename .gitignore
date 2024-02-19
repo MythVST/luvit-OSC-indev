@@ -6,3 +6,4 @@ deps/pretty-print.lua
 deps/dgram.lua
 deps/core.lua
 .vscode/settings.json
+joy.lua
