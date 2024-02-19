@@ -1,2 +1,2 @@
-luvit.exe OSCTurtle.lua
+luvit.exe OSCTest.lua
 pause
