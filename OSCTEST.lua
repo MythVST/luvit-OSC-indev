@@ -106,7 +106,7 @@ print(HOST..":"..PORT)
 --print(#outMessage)
 OSCserver:send(path..pArgs..outMessage,PORT,HOST)
 OSCserver:on('message',onMessageOSC)
-
+OSCserver:send(packStr("/Joystick/1/XY")..packStr(",ff")..splitByte(float2hex(-1))..splitByte(float2hex(1)),PORT,HOST)
 --deconstructed
 --path part begins with a forward slash and a name.
 --Subpaths are doable too.
@@ -120,9 +120,9 @@ OSCserver:on('message',onMessageOSC)
 --this part must once again be padded. luckily, it's already a multiple of 4 right now, so no work needs done.
 --now onto the values
 --all values must be converted to ascii representations of themselves. don't do this manually. use splitByte(value) to split up a numeric value.
---for ints, just splitBtye(value) is necessary. for floats though, you'll need to use splitByte(float2hex(value))
+--for ints, just splitByte(value) is necessary. for floats though, you'll need to use splitByte(float2hex(value))
 --padding is once again necessary (at least with ints. thanks to standardization, floats are already padded). this time, in front of the value instead of behind it, which is what packVal is for.
---packVal(splitByte(1234)) outputs '\000\000\004\210' and '\068\013\243\051' is the result of splitBtye(float2hex(567.8))
+--packVal(splitByte(1234)) outputs '\000\000\004\210' and '\068\013\243\051' is the result of splitByte(float2hex(567.8))
 --strings can be packed with packStr still. packStr("Hello World!"") results in "Hello World!\000\000\000\000". It should be noted that all strings should terminate in a null character *before* packing
 --putting it all together, we come out with this
 --"/Test/Value\000,ifs\000\000\004\210\068\013\243\051Hello World!\000\000\000\000"
